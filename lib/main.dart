@@ -3,6 +3,11 @@ import 'package:sneaker_shoes_app/customNavigationBar.dart';
 import 'package:sneaker_shoes_app/favorite_screen.dart';
 import 'package:sneaker_shoes_app/home_screen.dart';
 import 'package:sneaker_shoes_app/profile_screen.dart';
+import 'package:sneaker_shoes_app/signup_screens/complete_profile_screen.dart';
+import 'package:sneaker_shoes_app/signup_screens/confirm_password_screen.dart';
+import 'package:sneaker_shoes_app/signup_screens/forget_password_screen.dart';
+import 'package:sneaker_shoes_app/signup_screens/signin_screen.dart';
+import 'package:sneaker_shoes_app/signup_screens/signup_register_account_screen.dart';
 import 'product_list_screen.dart';
 
 void main() {
@@ -18,7 +23,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: BottomNavScreen(),
+      home: ConfirmPasswordScreen(),
     );
   }
 }

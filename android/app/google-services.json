@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "351742470263",
+    "firebase_url": "https://print-firebase-default-rtdb.firebaseio.com",
+    "project_id": "print-firebase",
+    "storage_bucket": "print-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:351742470263:android:44c6d90c1b4dc7f5e53e72",
+        "android_client_info": {
+          "package_name": "com.example.instagram_clone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "351742470263-9l1ce24qlp5mtll2sgja03khkvtfba2v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmAoY4OWeVmt9_gYw-2GFBUxvQ-Pjg4RU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "351742470263-9l1ce24qlp5mtll2sgja03khkvtfba2v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:351742470263:android:043d6f3f8a607673e53e72",
+        "android_client_info": {
+          "package_name": "com.example.print_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "351742470263-9l1ce24qlp5mtll2sgja03khkvtfba2v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmAoY4OWeVmt9_gYw-2GFBUxvQ-Pjg4RU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "351742470263-9l1ce24qlp5mtll2sgja03khkvtfba2v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:351742470263:android:1ca55718a33b2a4ce53e72",
+        "android_client_info": {
+          "package_name": "com.example.sneaker_shoes_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "351742470263-9l1ce24qlp5mtll2sgja03khkvtfba2v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmAoY4OWeVmt9_gYw-2GFBUxvQ-Pjg4RU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "351742470263-9l1ce24qlp5mtll2sgja03khkvtfba2v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
