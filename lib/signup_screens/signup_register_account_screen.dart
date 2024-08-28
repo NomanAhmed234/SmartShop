@@ -1,10 +1,22 @@
+import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // TODO: add flutter_svg package
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sneaker_shoes_app/colors.dart';
+import 'package:sneaker_shoes_app/firebase_services/firebase_auth_service.dart';
+import 'package:sneaker_shoes_app/signup_screens/signin_screen.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,20 +58,29 @@ class SignUpScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SocalCard(
-                        icon: SvgPicture.string(googleIcon),
-                        press: () {},
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                      CupertinoButton(
+                        onPressed: () {},
                         child: SocalCard(
-                          icon: SvgPicture.string(facebookIcon),
+                          icon: SvgPicture.string(googleIcon),
                           press: () {},
                         ),
                       ),
-                      SocalCard(
-                        icon: SvgPicture.string(twitterIcon),
-                        press: () {},
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: CupertinoButton(
+                          onPressed: () {},
+                          child: SocalCard(
+                            icon: SvgPicture.string(facebookIcon),
+                            press: () {},
+                          ),
+                        ),
+                      ),
+                      CupertinoButton(
+                        onPressed: () {},
+                        child: SocalCard(
+                          icon: SvgPicture.string(twitterIcon),
+                          press: () {},
+                        ),
                       ),
                     ],
                   ),
@@ -86,8 +107,20 @@ const authOutlineInputBorder = OutlineInputBorder(
   borderRadius: BorderRadius.all(Radius.circular(16)),
 );
 
-class SignUpForm extends StatelessWidget {
+class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
+
+  @override
+  State<SignUpForm> createState() => _SignUpFormState();
+}
+
+class _SignUpFormState extends State<SignUpForm> {
+  final TextEditingController passwordController = TextEditingController();
+
+  final TextEditingController emailController = TextEditingController();
+
+  final TextEditingController conPasswordController = TextEditingController();
+  final FirebaseAuthService _authService = FirebaseAuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -95,8 +128,9 @@ class SignUpForm extends StatelessWidget {
       child: Column(
         children: [
           TextFormField(
-            onSaved: (email) {},
-            onChanged: (email) {},
+            controller: emailController,
+            // onSaved: (email) {},
+            // onChanged: (email) {},
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
                 hintText: "Enter your email",
@@ -119,8 +153,9 @@ class SignUpForm extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: TextFormField(
-              onSaved: (password) {},
-              onChanged: (password) {},
+              // onSaved: (password) {},
+              // onChanged: (password) {},
+              controller: passwordController,
               obscureText: true,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
@@ -144,8 +179,9 @@ class SignUpForm extends StatelessWidget {
             ),
           ),
           TextFormField(
-            onSaved: (password) {},
-            onChanged: (password) {},
+            // onSaved: (password) {},
+            // onChanged: (password) {},
+            controller: conPasswordController,
             obscureText: true,
             decoration: InputDecoration(
                 hintText: "Enter your password",
@@ -167,7 +203,9 @@ class SignUpForm extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              _signup();
+            },
             style: ElevatedButton.styleFrom(
               elevation: 0,
               backgroundColor: CustomColors.purple,
@@ -182,6 +220,25 @@ class SignUpForm extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _signup() async {
+    String password = passwordController.text;
+    String email = emailController.text;
+    String conPassword = conPasswordController.text;
+    if (password == conPassword) {
+      User? user =
+          await _authService.signUpWithEmailAndPassword(email, password);
+      if (user != null) {
+        log("Created account successfully");
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SignInScreen()));
+      } else {
+        log("Not singup");
+      }
+    } else {
+      log('password connot match:');
+    }
   }
 }
 
@@ -213,11 +270,16 @@ class SocalCard extends StatelessWidget {
   }
 }
 
-class NoAccountText extends StatelessWidget {
+class NoAccountText extends StatefulWidget {
   const NoAccountText({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<NoAccountText> createState() => _NoAccountTextState();
+}
+
+class _NoAccountTextState extends State<NoAccountText> {
   @override
   Widget build(BuildContext context) {
     return Row(

@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 // TODO: add flutter_svg package
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sneaker_shoes_app/colors.dart';
+import 'package:sneaker_shoes_app/customNavigationBar.dart';
+import 'package:sneaker_shoes_app/firebase_services/firebase_auth_service.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
@@ -80,17 +83,26 @@ const authOutlineInputBorder = OutlineInputBorder(
   borderRadius: BorderRadius.all(Radius.circular(16)),
 );
 
-class SignInForm extends StatelessWidget {
+class SignInForm extends StatefulWidget {
   const SignInForm({super.key});
 
+  @override
+  State<SignInForm> createState() => _SignInFormState();
+}
+
+class _SignInFormState extends State<SignInForm> {
+  final TextEditingController emailController = TextEditingController();
+  FirebaseAuthService _auth = FirebaseAuthService();
+  final TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Form(
       child: Column(
         children: [
           TextFormField(
-            onSaved: (email) {},
-            onChanged: (email) {},
+            // onSaved: (email) {},
+            // onChanged: (email) {},
+            controller: emailController,
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
                 hintText: "Enter your email",
@@ -113,8 +125,9 @@ class SignInForm extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: TextFormField(
-              onSaved: (password) {},
-              onChanged: (password) {},
+              controller: passwordController,
+              // onSaved: () {},
+              // onChanged: (password) {},
               obscureText: true,
               decoration: InputDecoration(
                   hintText: "Enter your password",
@@ -138,7 +151,9 @@ class SignInForm extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              _signin();
+            },
             style: ElevatedButton.styleFrom(
               elevation: 0,
               backgroundColor: CustomColors.purple,
@@ -153,6 +168,20 @@ class SignInForm extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _signin() async {
+    String email = emailController.text;
+    String password = passwordController.text;
+    User? user = await _auth.sighInWithEmailAndPasword(email, password);
+    if (user != null) {
+      print("login successfully");
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        return BottomNavScreen();
+      }));
+    } else {
+      print("error accour");
+    }
   }
 }
 
