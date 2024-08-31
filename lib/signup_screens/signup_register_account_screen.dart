@@ -204,7 +204,18 @@ class _SignUpFormState extends State<SignUpForm> {
           const SizedBox(height: 32),
           ElevatedButton(
             onPressed: () {
-              _signup();
+              if (emailController.text.isEmpty) {
+                log("email is required");
+                _showErrorSnackBar("Email is required");
+              } else if (passwordController.text.isEmpty) {
+                log('password is required');
+                _showErrorSnackBar("Password is required");
+              } else if (conPasswordController.text.isEmpty) {
+                log('Confirm password is required');
+                _showErrorSnackBar("Confirm Password is required");
+              } else {
+                _signup();
+              }
             },
             style: ElevatedButton.styleFrom(
               elevation: 0,
@@ -226,19 +237,63 @@ class _SignUpFormState extends State<SignUpForm> {
     String password = passwordController.text;
     String email = emailController.text;
     String conPassword = conPasswordController.text;
+
+    // Clear the text fields after capturing their values
+
     if (password == conPassword) {
-      User? user =
-          await _authService.signUpWithEmailAndPassword(email, password);
-      if (user != null) {
-        log("Created account successfully");
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignInScreen()));
-      } else {
-        log("Not singup");
+      try {
+        // Attempt to create the user with the provided email and password
+        User? user =
+            await _authService.signUpWithEmailAndPassword(email, password);
+
+        if (user != null) {
+          log("Created account successfully");
+          passwordController.clear();
+          emailController.clear();
+          conPasswordController.clear();
+          // Navigate to the Sign-In screen upon successful registration
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SignInScreen()),
+          );
+        }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'email-already-in-use') {
+          log("The email is already in use by another account.");
+          // Optionally, show a message or SnackBar to the user
+          _showExistEmailSnackBar(
+              "The email is already in use by another account.");
+        } else if (e.email == '') {
+        } else {
+          log("Emait format not correct");
+          _showErrorSnackBar("Emait format not correct");
+        }
+      } catch (e) {
+        log("An unexpected error occurred.");
+        _showErrorSnackBar("An unexpected error occurred.");
       }
     } else {
-      log('password connot match:');
+      log('Passwords do not match.');
+      _showErrorSnackBar('Passwords do not match.');
     }
+  }
+
+  void _showErrorSnackBar(String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+      duration: Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _showExistEmailSnackBar(String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: Color.fromARGB(255, 225, 168, 44),
+      duration: Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
 

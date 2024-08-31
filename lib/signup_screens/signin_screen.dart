@@ -152,6 +152,11 @@ class _SignInFormState extends State<SignInForm> {
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
+              if (emailController.text.isEmpty) {
+                _showErrorSnackBar("Email is Required");
+              } else if (passwordController.text.isEmpty) {
+                _showErrorSnackBar("password is Required");
+              }
               _signin();
             },
             style: ElevatedButton.styleFrom(
@@ -173,15 +178,88 @@ class _SignInFormState extends State<SignInForm> {
   void _signin() async {
     String email = emailController.text;
     String password = passwordController.text;
-    User? user = await _auth.sighInWithEmailAndPasword(email, password);
-    if (user != null) {
-      print("login successfully");
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return BottomNavScreen();
-      }));
-    } else {
-      print("error accour");
+
+    // Clear the text fields after capturing their values
+
+    try {
+      // Attempt to sign in the user with the provided email and password
+      User? user = await _auth.sighInWithEmailAndPasword(email, password);
+      if (user != null) {
+        print("Login successfully");
+        // Navigate to the desired screen upon successful login
+        // Example: Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        emailController.clear();
+        passwordController.clear();
+        _showSuccessDialog();
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() {});
+      if (e.code == 'user-not-found') {
+        print("No user found for that email.");
+        _showErrorSnackBar("No user found for that email.");
+      } else if (e.code == 'wrong-password') {
+        setState(() {
+          print("Wrong password provided for that user.");
+          _showErrorSnackBar("Wrong password provided for that user.");
+        });
+      } else if (e.code == 'invalid-email') {
+        setState(() {
+          print("The email address is not valid.");
+          _showErrorSnackBar("The email address is not valid.");
+        });
+      } else {
+        setState(() {
+          print("Sign in failed: ${e.message}");
+          _showErrorSnackBar("Sign in failed: ${e.message}");
+        });
+      }
+    } catch (e) {
+      print("An unexpected error occurred: $e");
+      setState(() {
+        _showErrorSnackBar("An unexpected error occurred.");
+      });
     }
+  }
+
+  void _showErrorSnackBar(String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+      duration: Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Center(child: Icon(Icons.login_rounded)),
+          // content: Text(
+          //   "You have successfully registered!",
+          //   style: TextStyle(color: CustomColors.purple.withOpacity(0.1)),
+          // ),
+          actions: <Widget>[
+            // Center(
+            //   child: ElevatedButton(
+            //     child: Text(
+            //       "OK",
+            //       style: TextStyle(color: CustomColors.lightGreen),
+            //     ),
+            //     onPressed: () {
+            //       Navigator.pushReplacement(
+            //           context,
+            //           MaterialPageRoute(
+            //               builder: (context) => BottomNavScreen()));
+            //     },
+            //   ),
+            // ),
+          ],
+        );
+      },
+    );
   }
 }
 

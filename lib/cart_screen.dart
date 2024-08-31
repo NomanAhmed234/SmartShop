@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'dart:developer';
+import 'package:sneaker_shoes_app/data/add_to_card_data.dart';
 import 'package:sneaker_shoes_app/models/data_model.dart';
 import 'package:flutter/material.dart';
 
@@ -19,31 +21,24 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  List<CartItem> cartItems = [];
   double getRandomRating(double min, double max) {
     final random = Random();
     return double.parse(
         (min + (random.nextDouble() * (max - min))).toStringAsFixed(1));
   }
 
-  void addToCart() {
-    setState(() {
-      CartItem? existingItem = cartItems.firstWhere(
-        (cartItem) => cartItem.product.id == widget.item.id,
-        orElse: () => CartItem(product: widget.item),
-      );
-
-      if (existingItem.product.id == widget.item.id) {
-        existingItem.quantity++;
-      } else {
-        cartItems.add(CartItem(product: widget.item));
-      }
-
-      // Debugging output
-      print("Cart Items: ${cartItems.length}");
-      cartItems.forEach((item) {
-        print("Product ID: ${item.product.id}, Quantity: ${item.quantity}");
-      });
+  void addToCart(String title, String image, double price, int quantity,
+      String description, String category) {
+    addToCartData.add({
+      "image": image ??
+          'default_image_url', // Provide a default value if image is null
+      'title': title ?? 'Unknown Product', // Provide a default title
+      "description":
+          description ?? '', // Provide an empty string if description is null
+      "category": category ?? 'Uncategorized', // Provide a default category
+      'price': price?.toDouble() ??
+          0.0, // Convert price to double and provide a default value
+      'quantity': quantity ?? 1, // Provide a default quantity if null
     });
   }
 
@@ -150,14 +145,36 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 ),
               ),
               onPressed: () {
-                addToCart();
+                // Check if the item is already in the cart based on its title
+                final existingItemIndex = addToCartData.indexWhere(
+                  (element) => element['title'] == widget.item.title,
+                );
 
-                // Navigate to AllCartProductScreen
+                if (existingItemIndex == -1) {
+                  // If the item is not in the cart, add it
+                  addToCart(
+                    widget.item.title!.toString(),
+                    widget.item.images!.toString(),
+                    productPrice,
+                    quantity,
+                    widget.item.description.toString(),
+                    widget.item.category.toString(),
+                  );
+                } else {
+                  // If the item is already in the cart, increase the quantity
+                  setState(() {
+                    addToCartData[existingItemIndex]['quantity'] += quantity;
+                  });
+                }
+
+                // Reset quantity to 1 after adding
+                quantity = 1;
+
+                // Navigate to the AllProductCartScreen
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        AllProductCartScreen(cartItems: cartItems),
+                    builder: (context) => AllProductCartScreen(),
                   ),
                 );
               },
@@ -437,9 +454,6 @@ class ColorDots extends StatefulWidget {
 }
 
 class _ColorDotsState extends State<ColorDots> {
-  int quantity = 1;
-  late double productPrice;
-
   @override
   void initState() {
     super.initState();
